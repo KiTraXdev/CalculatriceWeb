@@ -1,0 +1,248 @@
+﻿@page "/"
+@rendermode InteractiveServer
+<PageTitle>Ma Calculatrice</PageTitle>
+
+<h1>Ma Calculatrice</h1>
+
+<div class="calculatrice">
+
+    <input value="@affichage" readonly />
+
+   <div class="touches">
+
+    <div></div>
+    <div></div>
+    <div></div>
+    <button class="effacer" @onclick="Retour">⌫</button>
+
+    <button @onclick='() => Chiffre("7")'>7</button>
+    <button @onclick='() => Chiffre("8")'>8</button>
+    <button @onclick='() => Chiffre("9")'>9</button>
+    <button class="operation" @onclick='() => ChoisirOperation("/")'>÷</button>
+
+    <button @onclick='() => Chiffre("4")'>4</button>
+    <button @onclick='() => Chiffre("5")'>5</button>
+    <button @onclick='() => Chiffre("6")'>6</button>
+    <button class="operation" @onclick='() => ChoisirOperation("*")'>×</button>
+
+    <button @onclick='() => Chiffre("1")'>1</button>
+    <button @onclick='() => Chiffre("2")'>2</button>
+    <button @onclick='() => Chiffre("3")'>3</button>
+    <button class="operation" @onclick='() => ChoisirOperation("-")'>−</button>
+
+    <button class="effacer" @onclick="Effacer">C</button>
+    <button @onclick='() => Chiffre("0")'>0</button>
+    <button class="egal" @onclick="Calculer">=</button>
+    <button class="operation" @onclick='() => ChoisirOperation("+")'>+</button>
+
+</div>
+</div>
+
+<p class="credit">Développé par Kitrac en C#</p>
+<style>
+
+    .calculatrice {
+       width: 450px;
+max-width: 90vw;
+        padding: 20px;
+        background: #1c1c1c;
+        border-radius: 25px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+    }
+
+    .calculatrice input {
+        width: 100%;
+        height: 110px;
+        margin-bottom: 15px;
+        padding: 10px;
+
+        font-size: 42px;
+        text-align: right;
+
+        background: #2a2a2a;
+        color: white;
+
+        border: none;
+        border-radius: 15px;
+    }
+
+    .touches {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 10px;
+    }
+
+    .touches button {
+        height: 100px;
+
+        font-size: 32px;
+
+        border: none;
+        border-radius: 50%;
+
+        background: #333;
+        color: white;
+
+        cursor: pointer;
+    }
+
+    .touches button:hover {
+        background: #444;
+    }
+
+    .touches .operation {
+        background: #ff9500;
+    }
+
+    .touches .operation:hover {
+        background: #e68700;
+    }
+
+    .touches .egal {
+        background: #28a745;
+    }
+
+    .touches .effacer {
+        background: #666;
+    }
+.credit {
+    margin-top: 20px;
+    font-size: 20px;
+    font-weight: bold;
+    color: white;
+    text-align: center;
+    letter-spacing: 1px;
+}
+</style>
+
+
+@code {
+
+    string affichage = "0";
+
+    double premierNombre = 0;
+
+    string operation = "";
+
+    bool nouveauNombre = false;
+
+string deuxiemeNombreTexte = "";
+
+    void Chiffre(string chiffre)
+{
+    if (operation != "")
+    {
+        deuxiemeNombreTexte += chiffre;
+
+        affichage = premierNombre
+            + " "
+            + operation
+            + " "
+            + deuxiemeNombreTexte;
+    }
+    else
+    {
+        if (affichage == "0" || affichage == "Erreur" || nouveauNombre)
+        {
+            affichage = chiffre;
+            nouveauNombre = false;
+        }
+        else
+        {
+            affichage += chiffre;
+        }
+    }
+}
+
+
+    void ChoisirOperation(string op)
+{
+    if (!double.TryParse(affichage, out premierNombre))
+    {
+        return;
+    }
+
+    operation = op;
+    deuxiemeNombreTexte = "";
+    nouveauNombre = true;
+
+    affichage = premierNombre + " " + operation;
+}
+
+
+   void Calculer()
+{
+    if (operation == "")
+    {
+        return;
+    }
+
+    if (!double.TryParse(deuxiemeNombreTexte, out double deuxiemeNombre))
+    {
+        return;
+    }
+
+    double resultat = 0;
+
+    if (operation == "+")
+    {
+        resultat = premierNombre + deuxiemeNombre;
+    }
+    else if (operation == "-")
+    {
+        resultat = premierNombre - deuxiemeNombre;
+    }
+    else if (operation == "*")
+    {
+        resultat = premierNombre * deuxiemeNombre;
+    }
+    else if (operation == "/")
+    {
+        if (deuxiemeNombre == 0)
+        {
+            affichage = "Erreur";
+            operation = "";
+            deuxiemeNombreTexte = "";
+            nouveauNombre = true;
+            return;
+        }
+
+        resultat = premierNombre / deuxiemeNombre;
+    }
+
+    affichage = resultat.ToString();
+
+    premierNombre = resultat;
+    operation = "";
+    deuxiemeNombreTexte = "";
+    nouveauNombre = true;
+}
+
+    void Effacer()
+    {
+        affichage = "0";
+
+        premierNombre = 0;
+
+        operation = "";
+
+        nouveauNombre = false;
+    }
+void Retour()
+{
+    if (affichage == "Erreur")
+    {
+        affichage = "0";
+        return;
+    }
+
+    if (affichage.Length > 1)
+    {
+        affichage = affichage.Substring(0, affichage.Length - 1);
+    }
+    else
+    {
+        affichage = "0";
+    }
+}
+}

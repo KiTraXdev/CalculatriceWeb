@@ -1,0 +1,10 @@
+{
+  "version": 2,
+  "dgSpecHash": "K2o67Ci5FVg=",
+  "success": true,
+  "projectFilePath": "C:\\CalculatriceWeb\\CalculatriceWeb.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\titou\\.nuget\\packages\\microsoft.aspnetcore.app.internal.assets\\10.0.10\\microsoft.aspnetcore.app.internal.assets.10.0.10.nupkg.sha512"
+  ],
+  "logs": []
+}

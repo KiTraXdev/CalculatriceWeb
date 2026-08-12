@@ -1,49 +1,204 @@
 ﻿@page "/"
 @rendermode InteractiveServer
+
 <PageTitle>Ma Calculatrice</PageTitle>
 
 <h1>Ma Calculatrice</h1>
 
+<div class="modes">
+    <button class="@(mode == "standard" ? "mode-actif" : "")"
+            @onclick='() => ChangerMode("standard")'>
+        Standard
+    </button>
+
+    <button class="@(mode == "scientifique" ? "mode-actif" : "")"
+            @onclick='() => ChangerMode("scientifique")'>
+        Scientifique
+    </button>
+
+    <button class="@(mode == "equations" ? "mode-actif" : "")"
+            @onclick='() => ChangerMode("equations")'>
+        Équations
+    </button>
+</div>
+
 <div class="calculatrice">
+<div class="indicateur-angle">
+    @if (mode == "scientifique")
+    {
+        <span>Angle : @modeAngle</span>
+    }
+    else
+    {
+        <span>Angle : —</span>
+    }
+</div>
 
     <input value="@affichage" readonly />
 
-   <div class="touches">
+    @if (mode == "scientifique")
+    {
+       <div class="touches-scientifiques">
 
-    <div></div>
-    <div></div>
-    <div></div>
-    <button class="effacer" @onclick="Retour">⌫</button>
+    <!-- ANGLES / CONSTANTES -->
+    <button @onclick='() => modeAngle = "DEG"'>DEG</button>
+    <button @onclick='() => modeAngle = "RAD"'>RAD</button>
+    <button @onclick="Pi">π</button>
+    <button @onclick="Euler">e</button>
 
-    <button @onclick='() => Chiffre("7")'>7</button>
-    <button @onclick='() => Chiffre("8")'>8</button>
-    <button @onclick='() => Chiffre("9")'>9</button>
-    <button class="operation" @onclick='() => ChoisirOperation("/")'>÷</button>
+    <!-- TRIGONOMÉTRIE DIRECTE -->
+    <button @onclick="Sinus">sin</button>
+    <button @onclick="Cosinus">cos</button>
+    <button @onclick="Tangente">tan</button>
+    <button @onclick="ArcSinus">sin⁻¹</button>
 
-    <button @onclick='() => Chiffre("4")'>4</button>
-    <button @onclick='() => Chiffre("5")'>5</button>
-    <button @onclick='() => Chiffre("6")'>6</button>
-    <button class="operation" @onclick='() => ChoisirOperation("*")'>×</button>
+    <button @onclick="ArcCosinus">cos⁻¹</button>
+    <button @onclick="ArcTangente">tan⁻¹</button>
 
-    <button @onclick='() => Chiffre("1")'>1</button>
-    <button @onclick='() => Chiffre("2")'>2</button>
-    <button @onclick='() => Chiffre("3")'>3</button>
-    <button class="operation" @onclick='() => ChoisirOperation("-")'>−</button>
+    <!-- PUISSANCES / RACINES -->
+    <button @onclick="Carre">x²</button>
+    <button @onclick="Cube">x³</button>
+    <button @onclick="Puissance">xʸ</button>
+    <button @onclick="RacineCarree">√</button>
 
-    <button class="effacer" @onclick="Effacer">C</button>
-    <button @onclick='() => Chiffre("0")'>0</button>
-    <button class="egal" @onclick="Calculer">=</button>
-    <button class="operation" @onclick='() => ChoisirOperation("+")'>+</button>
+    <button @onclick="RacineCubique">∛x</button>
+    <button @onclick="Inverse">1/x</button>
+
+    <!-- LOG / EXP -->
+    <button @onclick="Logarithme">log</button>
+    <button @onclick="LogarithmeNaturel">ln</button>
+    <button @onclick="Puissance10">10ˣ</button>
+    <button @onclick="Exponentielle">eˣ</button>
+
+    <!-- AUTRES -->
+    <button @onclick="ValeurAbsolue">|x|</button>
+    <button @onclick="Factorielle">x!</button>
+    <button @onclick="ChangerSigne">±</button>
+    <button @onclick="Virgule">,</button>
+
+    <button @onclick="Pourcentage">%</button>
+
+    <!-- PARENTHÈSES -->
+    <button @onclick='() => AjouterExpression("(")'>(</button>
+    <button @onclick='() => AjouterExpression(")")'>)</button>
+
+    <!-- EXPRESSIONS SCIENTIFIQUES -->
+    <button @onclick='() => AjouterExpression("sqrt(")'>√(</button>
+    <button @onclick='() => AjouterExpression("cbrt(")'>∛(</button>
+
+    <button @onclick='() => AjouterExpression("sin(")'>sin(</button>
+    <button @onclick='() => AjouterExpression("cos(")'>cos(</button>
+    <button @onclick='() => AjouterExpression("tan(")'>tan(</button>
+
+    <button @onclick='() => AjouterExpression("asin(")'>sin⁻¹(</button>
+    <button @onclick='() => AjouterExpression("acos(")'>cos⁻¹(</button>
+    <button @onclick='() => AjouterExpression("atan(")'>tan⁻¹(</button>
+
+    <button @onclick='() => AjouterExpression("log(")'>log(</button>
+    <button @onclick='() => AjouterExpression("ln(")'>ln(</button>
+
+    <button @onclick='() => AjouterExpression("pow10(")'>10ˣ(</button>
+    <button @onclick='() => AjouterExpression("exp(")'>eˣ(</button>
+
+    <button @onclick='() => AjouterExpression("inv(")'>1/x(</button>
+    <button @onclick='() => AjouterExpression("abs(")'>|x|(</button>
+    <button @onclick='() => AjouterExpression("fact(")'>x!(</button>
+    <button @onclick='() => AjouterExpression("pct(")'>%(</button>
 
 </div>
+    }
+
+   @if (mode == "equations")
+{
+   <div class="touches-equations">
+
+    <!-- INCONNUES -->
+    <button @onclick='() => AjouterExpression("x")'>x</button>
+    <button @onclick='() => AjouterExpression("x²")'>x²</button>
+    <button @onclick='() => AjouterExpression("y")'>y</button>
+
+    <!-- COEFFICIENTS -->
+    <button @onclick='() => AjouterExpression("a")'>a</button>
+    <button @onclick='() => AjouterExpression("b")'>b</button>
+    <button @onclick='() => AjouterExpression("c")'>c</button>
+
+    <!-- PARENTHÈSES -->
+    <button @onclick='() => AjouterExpression("(")'>(</button>
+    <button @onclick='() => AjouterExpression(")")'>)</button>
+
+    <!-- ÉGALITÉ -->
+    <button class="egal-equation"
+            @onclick='() => AjouterExpression("=")'>
+        =
+    </button>
+
+</div>
+}
+
+    <div class="touches">
+
+        <div></div>
+        <div></div>
+        <div></div>
+        <button class="effacer" @onclick="Retour">⌫</button>
+
+        <button @onclick='() => Chiffre("7")'>7</button>
+        <button @onclick='() => Chiffre("8")'>8</button>
+        <button @onclick='() => Chiffre("9")'>9</button>
+        <button class="operation" @onclick='() => ChoisirOperation("/")'>÷</button>
+
+        <button @onclick='() => Chiffre("4")'>4</button>
+        <button @onclick='() => Chiffre("5")'>5</button>
+        <button @onclick='() => Chiffre("6")'>6</button>
+        <button class="operation" @onclick='() => ChoisirOperation("*")'>×</button>
+
+        <button @onclick='() => Chiffre("1")'>1</button>
+        <button @onclick='() => Chiffre("2")'>2</button>
+        <button @onclick='() => Chiffre("3")'>3</button>
+        <button class="operation" @onclick='() => ChoisirOperation("-")'>−</button>
+
+        <button class="effacer" @onclick="Effacer">C</button>
+        <button @onclick='() => Chiffre("0")'>0</button>
+        <button class="egal" @onclick="Egal">=</button>
+        <button class="operation" @onclick='() => ChoisirOperation("+")'>+</button>
+
+    </div>
 </div>
 
-<p class="credit">Développé par Kitrac en C#</p>
+<p class="credit">Développé par Kitrax</p>
+
 <style>
+.modes button {
+    padding: 10px 16px;
+    font-size: 16px;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    background: #444;
+    color: white;
+}
 
+.modes .mode-actif {
+    background: #ff9500;
+    font-weight: bold;
+}
+    .modes {
+        display: flex;
+        gap: 10px;
+        margin-bottom: 15px;
+    }
+
+    
+.indicateur-angle {
+    text-align: right;
+    color: #aaa;
+    font-size: 14px;
+    margin-bottom: 5px;
+    padding-right: 5px;
+}
     .calculatrice {
-       width: 450px;
-max-width: 90vw;
+        width: 450px;
+        max-width: 90vw;
         padding: 20px;
         background: #1c1c1c;
         border-radius: 25px;
@@ -51,20 +206,22 @@ max-width: 90vw;
     }
 
     .calculatrice input {
-        width: 100%;
-        height: 110px;
-        margin-bottom: 15px;
-        padding: 10px;
+    width: 100%;
+    height: 110px;
+    margin-bottom: 15px;
+    padding: 10px;
 
-        font-size: 42px;
-        text-align: right;
+    font-size: 32px;
+    text-align: right;
 
-        background: #2a2a2a;
-        color: white;
+    background: #2a2a2a;
+    color: white;
 
-        border: none;
-        border-radius: 15px;
-    }
+    border: none;
+    border-radius: 15px;
+
+    overflow-x: auto;
+}
 
     .touches {
         display: grid;
@@ -74,15 +231,11 @@ max-width: 90vw;
 
     .touches button {
         height: 100px;
-
         font-size: 32px;
-
         border: none;
         border-radius: 50%;
-
         background: #333;
         color: white;
-
         cursor: pointer;
     }
 
@@ -105,131 +258,258 @@ max-width: 90vw;
     .touches .effacer {
         background: #666;
     }
-.credit {
-    margin-top: 20px;
-    font-size: 20px;
-    font-weight: bold;
+
+    .touches-scientifiques {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 8px;
+    margin-bottom: 15px;
+}
+
+.touches-scientifiques button {
+    height: 52px;
+    padding: 5px;
+    font-size: 16px;
+    border: none;
+    border-radius: 10px;
+    background: #555;
     color: white;
-    text-align: center;
-    letter-spacing: 1px;
+    cursor: pointer;
+}
+
+.touches-scientifiques button:hover {
+    background: #666;
+}
+
+.touches-equations {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    margin-bottom: 15px;
+}
+
+.touches-equations button {
+    height: 55px;
+    font-size: 18px;
+    border: none;
+    border-radius: 12px;
+    background: #4a4a4a;
+    color: white;
+    cursor: pointer;
+}
+
+.touches-equations button:hover {
+    background: #5a5a5a;
+}
+
+.touches-equations .egal-equation {
+    background: #28a745;
+    font-weight: bold;
+}
+
+    .touches-scientifiques button,
+    .touches-equations button {
+        height: 55px;
+        font-size: 18px;
+        border: none;
+        border-radius: 12px;
+        background: #555;
+        color: white;
+        cursor: pointer;
+    }
+
+    .credit {
+        margin-top: 20px;
+        font-size: 20px;
+        font-weight: bold;
+        color: white;
+        text-align: center;
+        letter-spacing: 1px;
+    }
+    @@media (max-width: 600px) {
+    .touches-scientifiques {
+        grid-template-columns: repeat(4, 1fr);
+    }
+
+    .touches-equations {
+        grid-template-columns: repeat(3, 1fr);
+    }
+
+    .touches-scientifiques button,
+    .touches-equations button {
+        height: 46px;
+        font-size: 14px;
+    }
+}
+/* DEG / RAD */
+.touches-scientifiques button:nth-child(1),
+.touches-scientifiques button:nth-child(2) {
+    background: #1565c0;
+    font-weight: bold;
+}
+
+/* Parenthèses */
+.touches-scientifiques button:nth-child(24),
+.touches-scientifiques button:nth-child(25) {
+    background: #6a1b9a;
+}
+
+/* Fonctions avec parenthèses */
+.touches-scientifiques button:nth-child(n+26) {
+    background: #37474f;
+}
+
+/* Effet au survol */
+.touches-scientifiques button:hover,
+.touches-equations button:hover {
+    filter: brightness(1.2);
+    transform: scale(1.03);
+}
+
+/* Animation douce */
+.touches-scientifiques button,
+.touches-equations button {
+    transition: 0.15s;
+}
+
+/* Bouton = du mode équations */
+.egal-equation {
+    background: #28a745 !important;
+    font-weight: bold;
 }
 </style>
 
-
 @code {
-
     string affichage = "0";
-
     double premierNombre = 0;
-
     string operation = "";
-
     bool nouveauNombre = false;
+    string deuxiemeNombreTexte = "";
 
-string deuxiemeNombreTexte = "";
-
-    void Chiffre(string chiffre)
+    string mode = "standard";
+string expression = "";
+    void ChangerMode(string nouveauMode)
 {
-    if (operation != "")
-    {
-        deuxiemeNombreTexte += chiffre;
-
-        affichage = premierNombre
-            + " "
-            + operation
-            + " "
-            + deuxiemeNombreTexte;
-    }
-    else
-    {
-        if (affichage == "0" || affichage == "Erreur" || nouveauNombre)
-        {
-            affichage = chiffre;
-            nouveauNombre = false;
-        }
-        else
-        {
-            affichage += chiffre;
-        }
-    }
+    mode = nouveauMode;
 }
+  
+void Chiffre(string chiffre)
+{
+    if (affichage == "Erreur")
+    {
+        affichage = "0";
+        expression = "";
+    }
 
+    if (expression == "" && affichage != "0")
+    {
+        expression = affichage;
+    }
+
+    expression += chiffre;
+    affichage = expression;
+}
 
     void ChoisirOperation(string op)
 {
-    if (!double.TryParse(affichage, out premierNombre))
+    if (affichage == "Erreur")
     {
-        return;
+        affichage = "0";
+        expression = "";
     }
 
-    operation = op;
-    deuxiemeNombreTexte = "";
-    nouveauNombre = true;
+    if (expression == "")
+    {
+        expression = affichage;
+    }
 
-    affichage = premierNombre + " " + operation;
+    string symbole = op;
+
+    if (op == "*")
+        symbole = "×";
+
+    if (op == "/")
+        symbole = "÷";
+
+    expression += " " + symbole + " ";
+    affichage = expression;
 }
 
-
-   void Calculer()
-{
-    if (operation == "")
+    void Calculer()
     {
-        return;
-    }
-
-    if (!double.TryParse(deuxiemeNombreTexte, out double deuxiemeNombre))
-    {
-        return;
-    }
-
-    double resultat = 0;
-
-    if (operation == "+")
-    {
-        resultat = premierNombre + deuxiemeNombre;
-    }
-    else if (operation == "-")
-    {
-        resultat = premierNombre - deuxiemeNombre;
-    }
-    else if (operation == "*")
-    {
-        resultat = premierNombre * deuxiemeNombre;
-    }
-    else if (operation == "/")
-    {
-        if (deuxiemeNombre == 0)
+        if (operation == "")
         {
-            affichage = "Erreur";
-            operation = "";
-            deuxiemeNombreTexte = "";
-            nouveauNombre = true;
             return;
         }
 
-        resultat = premierNombre / deuxiemeNombre;
-    }
+        if (!double.TryParse(deuxiemeNombreTexte, out double deuxiemeNombre))
+        {
+            return;
+        }
 
-    affichage = resultat.ToString();
+        double resultat = 0;
 
-    premierNombre = resultat;
-    operation = "";
-    deuxiemeNombreTexte = "";
-    nouveauNombre = true;
+        if (operation == "+")
+        {
+            resultat = premierNombre + deuxiemeNombre;
+        }
+        else if (operation == "-")
+        {
+            resultat = premierNombre - deuxiemeNombre;
+        }
+        else if (operation == "*")
+        {
+            resultat = premierNombre * deuxiemeNombre;
+        }
+        else if (operation == "^")
+{
+    resultat = Math.Pow(premierNombre, deuxiemeNombre);
 }
+        else if (operation == "/")
+        {
+            if (deuxiemeNombre == 0)
+            {
+                affichage = "Erreur";
+                operation = "";
+                deuxiemeNombreTexte = "";
+                nouveauNombre = true;
+                return;
+            }
+
+            resultat = premierNombre / deuxiemeNombre;
+        }
+
+        affichage = resultat.ToString();
+
+        premierNombre = resultat;
+        operation = "";
+        deuxiemeNombreTexte = "";
+        nouveauNombre = true;
+    }
 
     void Effacer()
     {
         affichage = "0";
-
         premierNombre = 0;
-
         operation = "";
-
+        deuxiemeNombreTexte = "";
         nouveauNombre = false;
+        expression = "";
     }
-void Retour()
+
+   void Retour()
 {
+    if (mode == "scientifique" || mode == "equations")
+    {
+        if (expression.Length > 0)
+        {
+            expression = expression.Substring(0, expression.Length - 1);
+        }
+
+        affichage = expression == "" ? "0" : expression;
+        return;
+    }
+
     if (affichage == "Erreur")
     {
         affichage = "0";
@@ -245,4 +525,1038 @@ void Retour()
         affichage = "0";
     }
 }
+    
+void Carre()
+{
+    if (!double.TryParse(affichage, out double nombre))
+    {
+        return;
+    }
+
+    double resultat = nombre * nombre;
+
+    affichage = resultat.ToString();
+    expression = affichage;
+    nouveauNombre = true;
+}
+void Cube()
+{
+    if (!double.TryParse(affichage, out double nombre))
+    {
+        return;
+    }
+
+    double resultat = nombre * nombre * nombre;
+
+    affichage = resultat.ToString();
+    nouveauNombre = true;
+}
+void Puissance()
+{
+    if (expression == "")
+    {
+        expression = affichage;
+    }
+
+    expression += " ^ ";
+    affichage = expression;
+}
+void Pi()
+{
+    if (expression == "" || affichage == "0")
+    {
+        expression = Math.PI.ToString();
+    }
+    else
+    {
+        expression += Math.PI.ToString();
+    }
+
+    affichage = expression;
+}
+
+void Euler()
+{
+    if (expression == "" || affichage == "0")
+    {
+        expression = Math.E.ToString();
+    }
+    else
+    {
+        expression += Math.E.ToString();
+    }
+
+    affichage = expression;
+}
+string modeAngle = "DEG";
+
+double ConvertirAngle(double nombre)
+{
+    if (modeAngle == "DEG")
+    {
+        return nombre * Math.PI / 180;
+    }
+
+    return nombre;
+    
+}
+double ConvertirResultatAngle(double radians)
+{
+    if (modeAngle == "DEG")
+    {
+        return radians * 180 / Math.PI;
+    }
+
+    return radians;
+}
+
+void RacineCarree()
+{
+    if (!double.TryParse(affichage, out double nombre))
+        return;
+
+    if (nombre < 0)
+    {
+        affichage = "Erreur";
+        return;
+    }
+
+    affichage = Math.Round(Math.Sqrt(nombre), 10).ToString();
+    expression = affichage;
+}
+
+void Sinus()
+{
+    if (!double.TryParse(affichage, out double nombre))
+        return;
+
+    double angle = ConvertirAngle(nombre);
+
+    affichage = Math.Round(Math.Sin(angle), 10).ToString();
+    expression = affichage;
+
+}
+
+void Cosinus()
+{
+    if (!double.TryParse(affichage, out double nombre))
+        return;
+
+    double angle = ConvertirAngle(nombre);
+
+    affichage = Math.Round(Math.Cos(angle), 10).ToString();
+    expression = affichage;
+}
+
+void Tangente()
+{
+    if (!double.TryParse(affichage, out double nombre))
+        return;
+
+    double angle = ConvertirAngle(nombre);
+
+    affichage = Math.Round(Math.Tan(angle), 10).ToString();
+    expression = affichage;
+}
+
+void ArcSinus()
+{
+    if (!double.TryParse(affichage, out double nombre))
+        return;
+
+    if (nombre < -1 || nombre > 1)
+    {
+        affichage = "Erreur";
+        return;
+    }
+
+    double resultat = Math.Asin(nombre);
+    resultat = ConvertirResultatAngle(resultat);
+
+    affichage = Math.Round(resultat, 10).ToString();
+    expression = affichage;
+    nouveauNombre = true;
+}
+
+void ArcCosinus()
+{
+    if (!double.TryParse(affichage, out double nombre))
+        return;
+
+    if (nombre < -1 || nombre > 1)
+    {
+        affichage = "Erreur";
+        return;
+    }
+
+    double resultat = Math.Acos(nombre);
+    resultat = ConvertirResultatAngle(resultat);
+
+    affichage = Math.Round(resultat, 10).ToString();
+    expression = affichage;
+    nouveauNombre = true;
+}
+
+void ArcTangente()
+{
+    if (!double.TryParse(affichage, out double nombre))
+        return;
+
+    double resultat = Math.Atan(nombre);
+    resultat = ConvertirResultatAngle(resultat);
+
+    affichage = Math.Round(resultat, 10).ToString();
+    expression = affichage;
+    nouveauNombre = true;
+}
+void Logarithme()
+{
+    if (!double.TryParse(affichage, out double nombre))
+        return;
+
+    if (nombre <= 0)
+    {
+        affichage = "Erreur";
+        return;
+    }
+
+    affichage = Math.Round(Math.Log10(nombre), 10).ToString();
+    expression = affichage;
+    nouveauNombre = true;
+}
+
+void LogarithmeNaturel()
+{
+    if (!double.TryParse(affichage, out double nombre))
+        return;
+
+    if (nombre <= 0)
+    {
+        affichage = "Erreur";
+        return;
+    }
+
+    affichage = Math.Round(Math.Log(nombre), 10).ToString();
+    expression = affichage;
+    nouveauNombre = true;
+}
+void Puissance10()
+{
+    if (!double.TryParse(affichage, out double nombre))
+        return;
+
+    affichage = Math.Round(Math.Pow(10, nombre), 10).ToString();
+    expression = affichage;
+    nouveauNombre = true;
+}
+
+void Exponentielle()
+{
+    if (!double.TryParse(affichage, out double nombre))
+        return;
+
+    affichage = Math.Round(Math.Exp(nombre), 10).ToString();
+    expression = affichage;
+    nouveauNombre = true;
+}
+void Inverse()
+{
+    if (!double.TryParse(affichage, out double nombre))
+        return;
+
+    if (nombre == 0)
+    {
+        affichage = "Erreur";
+        return;
+    }
+
+    affichage = Math.Round(1 / nombre, 10).ToString();
+    expression = affichage;
+    nouveauNombre = true;
+}
+
+void ValeurAbsolue()
+{
+    if (!double.TryParse(affichage, out double nombre))
+        return;
+
+    affichage = Math.Abs(nombre).ToString();
+    expression = affichage;
+    nouveauNombre = true;
+}
+
+void RacineCubique()
+{
+    if (!double.TryParse(affichage, out double nombre))
+        return;
+
+    affichage = Math.Round(Math.Cbrt(nombre), 10).ToString();
+    expression = affichage;
+    nouveauNombre = true;
+}
+
+void Factorielle()
+{
+    if (!int.TryParse(affichage, out int nombre) || nombre < 0)
+    {
+        affichage = "Erreur";
+        return;
+    }
+
+    if (nombre > 170)
+    {
+        affichage = "Erreur";
+        return;
+    }
+
+    double resultat = 1;
+
+    for (int i = 2; i <= nombre; i++)
+    {
+        resultat *= i;
+    }
+
+    affichage = resultat.ToString();
+    expression = affichage;
+    nouveauNombre = true;
+}
+void ChangerSigne()
+{
+    if (string.IsNullOrWhiteSpace(expression))
+        return;
+
+    int position = expression.Length - 1;
+
+    // Cherche le début du dernier nombre
+    while (position >= 0 &&
+           (char.IsDigit(expression[position]) ||
+            expression[position] == '.' ||
+            expression[position] == ','))
+    {
+        position--;
+    }
+
+    int debutNombre = position + 1;
+
+    if (debutNombre >= expression.Length)
+        return;
+
+    // Si le nombre possède déjà un "-" juste devant
+    if (debutNombre > 0 && expression[debutNombre - 1] == '-')
+    {
+        expression = expression.Remove(debutNombre - 1, 1);
+    }
+    else
+    {
+        expression = expression.Insert(debutNombre, "-");
+    }
+
+    affichage = expression;
+}
+void Virgule()
+{
+    if (operation != "")
+    {
+        if (!deuxiemeNombreTexte.Contains(","))
+        {
+            if (deuxiemeNombreTexte == "")
+                deuxiemeNombreTexte = "0,";
+
+            else
+                deuxiemeNombreTexte += ",";
+
+            affichage = premierNombre
+                + " "
+                + operation
+                + " "
+                + deuxiemeNombreTexte;
+        }
+    }
+    else
+    {
+        if (!affichage.Contains(","))
+        {
+            affichage += ",";
+        }
+    }
+}
+void Pourcentage()
+{
+    if (!double.TryParse(affichage, out double nombre))
+        return;
+
+    affichage = (nombre / 100).ToString();
+    expression = affichage;
+    nouveauNombre = true;
+}
+void AjouterExpression(string texte)
+{
+    if (affichage == "0" || affichage == "Erreur")
+    {
+        expression = "";
+    }
+
+    expression += texte;
+    affichage = expression;
+}
+void CalculerExpression()
+{
+    if (string.IsNullOrWhiteSpace(expression))
+        return;
+
+    try
+    {
+        string exp = expression
+            .Replace("×", "*")
+            .Replace("÷", "/")
+            .Replace(",", ".");
+if (exp.Contains("^"))
+{
+    string[] parties = exp.Split('^');
+
+    if (parties.Length == 2 &&
+        double.TryParse(
+            parties[0].Trim(),
+            System.Globalization.NumberStyles.Any,
+            System.Globalization.CultureInfo.InvariantCulture,
+            out double baseNombre) &&
+        double.TryParse(
+            parties[1].Trim(),
+            System.Globalization.NumberStyles.Any,
+            System.Globalization.CultureInfo.InvariantCulture,
+            out double exposant))
+    {
+        double resultatPuissance = Math.Pow(baseNombre, exposant);
+
+        affichage = Math.Round(resultatPuissance, 10).ToString();
+        expression = affichage;
+        return;
+    }
+}
+while (exp.Contains("sqrt("))
+{
+    int debut = exp.LastIndexOf("sqrt(");
+    int debutNombre = debut + 5;
+    int fin = exp.IndexOf(")", debutNombre);
+
+    if (fin == -1)
+    {
+        affichage = "Erreur";
+        return;
+    }
+
+    string texteNombre = exp.Substring(debutNombre, fin - debutNombre);
+
+    if (!double.TryParse(
+        texteNombre,
+        System.Globalization.NumberStyles.Any,
+        System.Globalization.CultureInfo.InvariantCulture,
+        out double nombre))
+    {
+        affichage = "Erreur";
+        return;
+    }
+
+    if (nombre < 0)
+    {
+        affichage = "Erreur";
+        return;
+    }
+
+    double resultatRacine = Math.Sqrt(nombre);
+
+    exp = exp.Substring(0, debut)
+        + resultatRacine.ToString(System.Globalization.CultureInfo.InvariantCulture)
+        + exp.Substring(fin + 1);
+}
+string[] fonctionsArc = { "asin(", "acos(", "atan(" };
+
+foreach (string fonction in fonctionsArc)
+{
+    while (exp.Contains(fonction))
+    {
+        int debut = exp.LastIndexOf(fonction);
+        int debutNombre = debut + fonction.Length;
+        int fin = exp.IndexOf(")", debutNombre);
+
+        if (fin == -1)
+        {
+            affichage = "Erreur";
+            return;
+        }
+
+        string texteNombre =
+            exp.Substring(debutNombre, fin - debutNombre);
+
+        if (!double.TryParse(
+            texteNombre,
+            System.Globalization.NumberStyles.Any,
+            System.Globalization.CultureInfo.InvariantCulture,
+            out double nombreArc))
+        {
+            affichage = "Erreur";
+            return;
+        }
+
+        double resultatArc;
+
+        if (fonction == "asin(")
+        {
+            if (nombreArc < -1 || nombreArc > 1)
+            {
+                affichage = "Erreur";
+                return;
+            }
+
+            resultatArc = Math.Asin(nombreArc);
+        }
+        else if (fonction == "acos(")
+        {
+            if (nombreArc < -1 || nombreArc > 1)
+            {
+                affichage = "Erreur";
+                return;
+            }
+
+            resultatArc = Math.Acos(nombreArc);
+        }
+        else
+        {
+            resultatArc = Math.Atan(nombreArc);
+        }
+
+        resultatArc = ConvertirResultatAngle(resultatArc);
+        resultatArc = Math.Round(resultatArc, 10);
+
+        exp = exp.Substring(0, debut)
+            + resultatArc.ToString(
+                System.Globalization.CultureInfo.InvariantCulture
+            )
+            + exp.Substring(fin + 1);
+    }
+}
+string[] fonctionsTrig = { "sin(", "cos(", "tan(" };
+
+foreach (string fonction in fonctionsTrig)
+{
+    while (exp.Contains(fonction))
+    {
+        int debut = exp.LastIndexOf(fonction);
+        int debutNombre = debut + fonction.Length;
+        int fin = exp.IndexOf(")", debutNombre);
+
+        if (fin == -1)
+        {
+            affichage = "Erreur";
+            return;
+        }
+
+        string texteNombre = exp.Substring(debutNombre, fin - debutNombre);
+
+        if (!double.TryParse(
+            texteNombre,
+            System.Globalization.NumberStyles.Any,
+            System.Globalization.CultureInfo.InvariantCulture,
+            out double nombre))
+        {
+            affichage = "Erreur";
+            return;
+        }
+
+        double angle = ConvertirAngle(nombre);
+        double resultatTrig = 0;
+
+        if (fonction == "sin(")
+        {
+            resultatTrig = Math.Sin(angle);
+        }
+        else if (fonction == "cos(")
+        {
+            resultatTrig = Math.Cos(angle);
+        }
+        else if (fonction == "tan(")
+        {
+            resultatTrig = Math.Tan(angle);
+        }
+
+        resultatTrig = Math.Round(resultatTrig, 10);
+
+        exp = exp.Substring(0, debut)
+            + resultatTrig.ToString(
+                System.Globalization.CultureInfo.InvariantCulture
+            )
+            + exp.Substring(fin + 1);
+    }
+}
+string[] fonctionsLog = { "log(", "ln(" };
+
+foreach (string fonction in fonctionsLog)
+{
+    while (exp.Contains(fonction))
+    {
+        int debut = exp.LastIndexOf(fonction);
+        int debutNombre = debut + fonction.Length;
+        int fin = exp.IndexOf(")", debutNombre);
+
+        if (fin == -1)
+        {
+            affichage = "Erreur";
+            return;
+        }
+
+        string texteNombre =
+            exp.Substring(debutNombre, fin - debutNombre);
+
+        if (!double.TryParse(
+            texteNombre,
+            System.Globalization.NumberStyles.Any,
+            System.Globalization.CultureInfo.InvariantCulture,
+            out double nombreLog))
+        {
+            affichage = "Erreur";
+            return;
+        }
+
+        if (nombreLog <= 0)
+        {
+            affichage = "Erreur";
+            return;
+        }
+
+        double resultatLog;
+
+        if (fonction == "log(")
+        {
+            resultatLog = Math.Log10(nombreLog);
+        }
+        else
+        {
+            resultatLog = Math.Log(nombreLog);
+        }
+
+        resultatLog = Math.Round(resultatLog, 10);
+
+        exp = exp.Substring(0, debut)
+            + resultatLog.ToString(
+                System.Globalization.CultureInfo.InvariantCulture
+            )
+            + exp.Substring(fin + 1);
+    }
+}
+string[] fonctionsSpeciales = { "cbrt(", "abs(" };
+
+foreach (string fonction in fonctionsSpeciales)
+{
+    while (exp.Contains(fonction))
+    {
+        int debut = exp.LastIndexOf(fonction);
+        int debutNombre = debut + fonction.Length;
+        int fin = exp.IndexOf(")", debutNombre);
+
+        if (fin == -1)
+        {
+            affichage = "Erreur";
+            return;
+        }
+
+        string texteNombre =
+            exp.Substring(debutNombre, fin - debutNombre);
+
+        if (!double.TryParse(
+            texteNombre,
+            System.Globalization.NumberStyles.Any,
+            System.Globalization.CultureInfo.InvariantCulture,
+            out double nombreSpecial))
+        {
+            affichage = "Erreur";
+            return;
+        }
+
+        double resultatSpecial;
+
+        if (fonction == "cbrt(")
+        {
+            resultatSpecial = Math.Cbrt(nombreSpecial);
+        }
+        else
+        {
+            resultatSpecial = Math.Abs(nombreSpecial);
+        }
+
+        resultatSpecial = Math.Round(resultatSpecial, 10);
+
+        exp = exp.Substring(0, debut)
+            + resultatSpecial.ToString(
+                System.Globalization.CultureInfo.InvariantCulture
+            )
+            + exp.Substring(fin + 1);
+    }
+}
+string[] fonctionsExpo = { "pow10(", "exp(" };
+
+foreach (string fonction in fonctionsExpo)
+{
+    while (exp.Contains(fonction))
+    {
+        int debut = exp.LastIndexOf(fonction);
+        int debutNombre = debut + fonction.Length;
+        int fin = exp.IndexOf(")", debutNombre);
+
+        if (fin == -1)
+        {
+            affichage = "Erreur";
+            return;
+        }
+
+        string texteNombre =
+            exp.Substring(debutNombre, fin - debutNombre);
+
+        if (!double.TryParse(
+            texteNombre,
+            System.Globalization.NumberStyles.Any,
+            System.Globalization.CultureInfo.InvariantCulture,
+            out double nombreExpo))
+        {
+            affichage = "Erreur";
+            return;
+        }
+
+        double resultatExpo;
+
+        if (fonction == "pow10(")
+        {
+            resultatExpo = Math.Pow(10, nombreExpo);
+        }
+        else
+        {
+            resultatExpo = Math.Exp(nombreExpo);
+        }
+
+        resultatExpo = Math.Round(resultatExpo, 10);
+
+        exp = exp.Substring(0, debut)
+            + resultatExpo.ToString(
+                System.Globalization.CultureInfo.InvariantCulture
+            )
+            + exp.Substring(fin + 1);
+    }
+}
+string[] fonctionsFinales = { "inv(", "fact(", "pct(" };
+
+foreach (string fonction in fonctionsFinales)
+{
+    while (exp.Contains(fonction))
+    {
+        int debut = exp.LastIndexOf(fonction);
+        int debutNombre = debut + fonction.Length;
+        int fin = exp.IndexOf(")", debutNombre);
+
+        if (fin == -1)
+        {
+            affichage = "Erreur";
+            return;
+        }
+
+        string texteNombre =
+            exp.Substring(debutNombre, fin - debutNombre);
+
+        if (!double.TryParse(
+            texteNombre,
+            System.Globalization.NumberStyles.Any,
+            System.Globalization.CultureInfo.InvariantCulture,
+            out double nombreFinal))
+        {
+            affichage = "Erreur";
+            return;
+        }
+
+        double resultatFinal = 0;
+
+        if (fonction == "inv(")
+        {
+            if (nombreFinal == 0)
+            {
+                affichage = "Erreur";
+                return;
+            }
+
+            resultatFinal = 1 / nombreFinal;
+        }
+        else if (fonction == "pct(")
+        {
+            resultatFinal = nombreFinal / 100;
+        }
+        else if (fonction == "fact(")
+        {
+            if (nombreFinal < 0 ||
+                nombreFinal != Math.Floor(nombreFinal) ||
+                nombreFinal > 170)
+            {
+                affichage = "Erreur";
+                return;
+            }
+
+            resultatFinal = 1;
+
+            for (int i = 2; i <= (int)nombreFinal; i++)
+            {
+                resultatFinal *= i;
+            }
+        }
+
+        resultatFinal = Math.Round(resultatFinal, 10);
+
+        exp = exp.Substring(0, debut)
+            + resultatFinal.ToString(
+                System.Globalization.CultureInfo.InvariantCulture
+            )
+            + exp.Substring(fin + 1);
+    }
+}
+        var table = new System.Data.DataTable();
+
+        object resultat = table.Compute(exp, "");
+
+        affichage = resultat.ToString() ?? "Erreur";
+
+        expression = affichage;
+        nouveauNombre = true;
+    }
+    catch
+    {
+        affichage = "Erreur";
+        expression = "";
+    }
+}
+(double a, double b, double c) AnalyserCoteSecondDegre(string cote)
+{
+    cote = cote.Replace(" ", "").Replace("-", "+-");
+
+    string[] termes = cote.Split(
+        '+',
+        StringSplitOptions.RemoveEmptyEntries
+    );
+
+    double a = 0;
+    double b = 0;
+    double c = 0;
+
+    foreach (string terme in termes)
+    {
+        if (terme.Contains("x²"))
+        {
+            string texte = terme.Replace("x²", "");
+
+            if (texte == "")
+                a += 1;
+            else if (texte == "-")
+                a -= 1;
+            else
+                a += double.Parse(texte);
+        }
+        else if (terme.Contains("x"))
+        {
+            string texte = terme.Replace("x", "");
+
+            if (texte == "")
+                b += 1;
+            else if (texte == "-")
+                b -= 1;
+            else
+                b += double.Parse(texte);
+        }
+        else
+        {
+            c += double.Parse(terme);
+        }
+    }
+
+    return (a, b, c);
+}
+void ResoudreSecondDegre()
+{
+    try
+    {
+        string eq = expression
+            .Replace(" ", "")
+            .Replace("−", "-");
+
+        string[] parties = eq.Split('=');
+
+        if (parties.Length != 2)
+        {
+            affichage = "Équation invalide";
+            return;
+        }
+
+        // Analyse séparément les deux côtés
+        var gauche = AnalyserCoteSecondDegre(parties[0]);
+        var droite = AnalyserCoteSecondDegre(parties[1]);
+
+        // On ramène mathématiquement tout du même côté
+        double a = gauche.a - droite.a;
+        double b = gauche.b - droite.b;
+        double c = gauche.c - droite.c;
+
+        // Si x² disparaît, l'équation devient du premier degré
+        if (a == 0)
+        {
+            if (b == 0)
+            {
+                if (c == 0)
+                    affichage = "Infinité de solutions";
+                else
+                    affichage = "Aucune solution";
+
+                return;
+            }
+
+            double xPremierDegre = -c / b;
+
+            affichage =
+                "x = " + Math.Round(xPremierDegre, 10);
+
+            expression = "";
+            return;
+        }
+
+        double delta = (b * b) - (4 * a * c);
+
+        if (delta > 0)
+        {
+            double x1 =
+                (-b - Math.Sqrt(delta)) / (2 * a);
+
+            double x2 =
+                (-b + Math.Sqrt(delta)) / (2 * a);
+
+            affichage =
+                "Δ = " + Math.Round(delta, 10)
+                + " | x1 = " + Math.Round(x1, 10)
+                + " | x2 = " + Math.Round(x2, 10);
+        }
+        else if (delta == 0)
+        {
+            double x = -b / (2 * a);
+
+            affichage =
+                "Δ = 0 | x = " + Math.Round(x, 10);
+        }
+        else
+        {
+            affichage =
+                "Δ = " + Math.Round(delta, 10)
+                + " | Aucune solution réelle";
+        }
+
+        expression = "";
+    }
+    catch
+    {
+        affichage = "Équation invalide";
+    }
+}
+void Egal()
+{
+    if (mode == "equations" && expression.Contains("="))
+    {
+        if (expression.Contains("x²"))
+        {
+            ResoudreSecondDegre();
+        }
+        else
+        {
+            ResoudreEquation();
+        }
+
+        return;
+    }
+
+    CalculerExpression();
+
+    if (affichage != "Erreur")
+    {
+        expression = affichage;
+    }
+}
+void ResoudreEquation()
+{
+    try
+    {
+        string eq = expression.Replace(" ", "");
+
+        if (!eq.Contains("=") || !eq.Contains("x"))
+        {
+            affichage = "Équation invalide";
+            return;
+        }
+
+        string[] parties = eq.Split('=');
+
+        if (parties.Length != 2)
+        {
+            affichage = "Équation invalide";
+            return;
+        }
+
+        (double coeffGauche, double constanteGauche) = AnalyserCote(parties[0]);
+        (double coeffDroite, double constanteDroite) = AnalyserCote(parties[1]);
+
+        double coeffFinal = coeffGauche - coeffDroite;
+        double constanteFinale = constanteDroite - constanteGauche;
+
+        if (coeffFinal == 0)
+        {
+            if (constanteFinale == 0)
+                affichage = "Infinité de solutions";
+            else
+                affichage = "Aucune solution";
+
+            return;
+        }
+
+        double x = constanteFinale / coeffFinal;
+
+        affichage = "x = " + Math.Round(x, 10);
+        expression = "";
+    }
+    catch
+    {
+        affichage = "Équation invalide";
+    }
+}
+(double coefficient, double constante) AnalyserCote(string cote)
+{
+    cote = cote.Replace("-", "+-");
+
+    string[] termes = cote.Split(
+        '+',
+        StringSplitOptions.RemoveEmptyEntries
+    );
+
+    double coefficient = 0;
+    double constante = 0;
+
+    foreach (string terme in termes)
+    {
+        if (terme.Contains("x"))
+        {
+            string coeffTexte = terme.Replace("x", "");
+
+            if (coeffTexte == "")
+                coefficient += 1;
+            else if (coeffTexte == "-")
+                coefficient -= 1;
+            else
+                coefficient += double.Parse(coeffTexte);
+        }
+        else
+        {
+            constante += double.Parse(terme);
+        }
+    }
+
+    return (coefficient, constante);
+}
+
 }

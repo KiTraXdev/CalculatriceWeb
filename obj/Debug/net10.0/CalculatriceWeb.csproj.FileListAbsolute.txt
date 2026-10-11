@@ -83,3 +83,4 @@ C:\CalculatriceWeb\obj\Debug\net10.0\CalculatriceWeb.genruntimeconfig.cache
 C:\CalculatriceWeb\obj\Debug\net10.0\ref\CalculatriceWeb.dll
 C:\CalculatriceWeb\obj\Debug\net10.0\compressed\4rom4snrkl-{0}-aaiv6qu63w-aaiv6qu63w.gz
 C:\CalculatriceWeb\obj\Debug\net10.0\compressed\v93ely66h8-{0}-aaiv6qu63w-aaiv6qu63w.gz
+C:\CalculatriceWeb\obj\Debug\net10.0\CalculatriceWeb.sourcelink.json

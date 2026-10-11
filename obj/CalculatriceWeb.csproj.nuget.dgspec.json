@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\CalculatriceWeb\\CalculatriceWeb.csproj": {}
+    "D:\\DEV_USB\\c#\\calculatriceweb\\CalculatriceWeb\\CalculatriceWeb.csproj": {}
   },
   "projects": {
-    "C:\\CalculatriceWeb\\CalculatriceWeb.csproj": {
+    "D:\\DEV_USB\\c#\\calculatriceweb\\CalculatriceWeb\\CalculatriceWeb.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\CalculatriceWeb\\CalculatriceWeb.csproj",
+        "projectUniqueName": "D:\\DEV_USB\\c#\\calculatriceweb\\CalculatriceWeb\\CalculatriceWeb.csproj",
         "projectName": "CalculatriceWeb",
-        "projectPath": "C:\\CalculatriceWeb\\CalculatriceWeb.csproj",
+        "projectPath": "D:\\DEV_USB\\c#\\calculatriceweb\\CalculatriceWeb\\CalculatriceWeb.csproj",
         "packagesPath": "C:\\Users\\titou\\.nuget\\packages\\",
-        "outputPath": "C:\\CalculatriceWeb\\obj\\",
+        "outputPath": "D:\\DEV_USB\\c#\\calculatriceweb\\CalculatriceWeb\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\titou\\AppData\\Roaming\\NuGet\\NuGet.Config"
